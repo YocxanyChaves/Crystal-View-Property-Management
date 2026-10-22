@@ -313,22 +313,14 @@
     });
   }));
 
-  /* ---------- Fotos que vibran cuando el mouse se acerca ---------- */
-  const cars=[...document.querySelectorAll('[data-carousel]')];
-  cars.forEach(c=>c.addEventListener('animationend',e=>{ if(e.animationName==='jelly') c.classList.remove('jelly'); }));
-  if(!reduced) document.addEventListener('pointermove',e=>{
-    if(e.pointerType!=='mouse') return;
-    cars.forEach(c=>{
-      if(!c.offsetParent) return;
-      const r=c.getBoundingClientRect();
-      const d=Math.hypot(Math.max(r.left-e.clientX,0,e.clientX-r.right),Math.max(r.top-e.clientY,0,e.clientY-r.bottom));
-      const amp=d>0?Math.max(0,1-d/160)*3.4:0;
-      c.style.setProperty('--amp',amp.toFixed(2));
-      c.classList.toggle('buzz',amp>.15);
-      if(d===0&&!c.dataset.inside){ c.dataset.inside='1'; c.classList.remove('jelly'); void c.offsetWidth; c.classList.add('jelly'); }
-      else if(d>0) delete c.dataset.inside;
+  /* ---------- Fotos que rebotan como gelatina cuando entra el mouse ---------- */
+  document.querySelectorAll('[data-carousel]').forEach(c=>{
+    c.addEventListener('pointerenter',e=>{
+      if(e.pointerType!=='mouse'||reduced) return;
+      c.classList.remove('jelly'); void c.offsetWidth; c.classList.add('jelly');
     });
-  },{passive:true});
+    c.addEventListener('animationend',e=>{ if(e.animationName==='jelly') c.classList.remove('jelly'); });
+  });
 
   /* ---------- Por qué nosotros: el balde se voltea y el limpiador limpia la sección ---------- */
   const why=document.getElementById('why');
