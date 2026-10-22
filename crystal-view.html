@@ -1,0 +1,422 @@
+<title>Crystal View Property Management</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: sitio de 5 vistas con barra superior fija; franjas de color a todo lo ancho con contenido centrado a 1120px. Motivo: el "barrido" diagonal de una escobilla sobre vidrio. */
+:root{
+  --bg:#f5f8fa; --surface:#ffffff; --ink:#13283b; --muted:#566a7c; --line:#d8e2ea;
+  --glass:#dcebf2; --accent:#f0b429; --accent-ink:#13283b; --deep:#13283b; --deep-fg:#eef4f8;
+  --f-display:"Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1923; --surface:#152431; --ink:#e7eff5; --muted:#9ab0c1; --line:#24384a;
+  --glass:#1b3142; --accent:#f3be45; --accent-ink:#13283b; --deep:#0a131b; --deep-fg:#e7eff5; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1923; --surface:#152431; --ink:#e7eff5; --muted:#9ab0c1; --line:#24384a;
+  --glass:#1b3142; --accent:#f3be45; --accent-ink:#13283b; --deep:#0a131b; --deep-fg:#e7eff5; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+h1,h2,h3{font-family:var(--f-display);line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:700;letter-spacing:-.02em}
+h2{font-size:clamp(1.6rem,3.4vw,2.4rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.2rem;font-weight:600}
+p{margin:0}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:1.15rem;color:var(--muted);max-width:58ch}
+.band{padding-block:72px}
+.band.alt{background:var(--surface);border-block:1px solid var(--line)}
+.stack{display:flex;flex-direction:column;gap:16px}
+
+/* Barra de navegación */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--f-display);font-weight:700;font-size:1.15rem}
+.logo-mark{width:34px;height:34px;border-radius:8px;background:var(--deep);position:relative;overflow:hidden;flex:none}
+.logo-mark::after{content:"";position:absolute;inset:-10px auto -10px 8px;width:9px;background:var(--accent);transform:rotate(28deg)}
+.menu{display:flex;gap:4px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+.menu a{display:block;padding:8px 12px;border-radius:999px;text-decoration:none;font-weight:500;font-size:.95rem;color:var(--muted)}
+.menu a:hover{color:var(--ink);background:var(--glass)}
+.menu a[aria-current="page"]{color:var(--ink);background:var(--glass)}
+.menu a.cta-link{background:var(--accent);color:var(--accent-ink);font-weight:600}
+.burger{display:none;background:none;border:1px solid var(--line);border-radius:8px;padding:8px 12px;color:var(--ink);font:inherit;cursor:pointer}
+@media (max-width:820px){
+  .burger{display:block}
+  .menu{display:none;position:absolute;left:0;right:0;top:100%;flex-direction:column;background:var(--bg);border-bottom:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+  .menu.open{display:flex}
+}
+
+/* Botones */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;font-weight:600;text-decoration:none;border:2px solid transparent;cursor:pointer;font:600 1rem var(--f-body)}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-ghost{border-color:var(--ink);color:var(--ink);background:transparent}
+.btn:focus-visible,.menu a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+
+/* Hero con barrido */
+.hero{padding-block:72px 64px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-40%;right:-8%;width:46%;height:180%;background:var(--glass);transform:rotate(18deg);z-index:0}
+.hero::after{content:"";position:absolute;top:-40%;right:30%;width:14px;height:180%;background:var(--accent);transform:rotate(18deg);z-index:0;opacity:.9}
+.hero .wrap{position:relative;z-index:1}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:end}
+.hero-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.hero-card .row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line);padding-bottom:10px;font-size:.95rem}
+.hero-card .row:last-child{border:0;padding:0}
+.hero-card b{font-variant-numeric:tabular-nums}
+@media (max-width:820px){.hero-grid{grid-template-columns:1fr}.hero::after{right:8%}}
+
+/* Dos servicios */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.service{border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:14px;text-decoration:none;border:1px solid var(--line);background:var(--surface);transition:transform .2s}
+.service:hover{transform:translateY(-3px)}
+.service.dark{background:var(--deep);color:var(--deep-fg);border-color:var(--deep)}
+.service.dark .eyebrow,.service.dark p{color:color-mix(in srgb,var(--deep-fg) 75%,transparent)}
+.service ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.service .go{margin-top:auto;font-weight:600}
+@media (max-width:720px){.split{grid-template-columns:1fr}}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+@media (max-width:820px){.grid3{grid-template-columns:1fr}}
+@media (max-width:620px){.grid2{grid-template-columns:1fr}}
+.feat{display:flex;flex-direction:column;gap:8px;padding-top:16px;border-top:2px solid var(--ink);min-width:0}
+.feat p{color:var(--muted)}
+
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.box p{color:var(--muted)}
+.tag{align-self:flex-start;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--glass);color:var(--ink)}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:s}
+.steps li{list-style:none;display:flex;flex-direction:column;gap:6px;min-width:0}
+.steps li::before{counter-increment:s;content:counter(s);font-family:var(--f-display);font-weight:700;font-size:1rem;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink)}
+.steps p{color:var(--muted);font-size:.95rem}
+.steps{padding:0;margin:0}
+@media (max-width:820px){.steps{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.steps{grid-template-columns:1fr}}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+
+.quote{display:flex;flex-direction:column;gap:12px}
+.quote blockquote{margin:0;font-size:1.05rem}
+.quote cite{font-style:normal;color:var(--muted);font-size:.9rem}
+
+.combo{background:var(--deep);color:var(--deep-fg);border-radius:18px;padding:40px;display:grid;grid-template-columns:1.3fr .7fr;gap:32px;align-items:center;position:relative;overflow:hidden}
+.combo::after{content:"";position:absolute;top:-30%;right:22%;width:10px;height:160%;background:var(--accent);transform:rotate(18deg)}
+.combo > *{position:relative;z-index:1}
+.combo p{color:color-mix(in srgb,var(--deep-fg) 78%,transparent)}
+.combo .price{font-family:var(--f-display);font-size:2.4rem;font-weight:700;font-variant-numeric:tabular-nums}
+@media (max-width:720px){.combo{grid-template-columns:1fr;padding:28px}}
+
+.ba{display:grid;grid-template-columns:1fr 1fr;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+.ba div{aspect-ratio:4/3;max-width:100%;display:flex;align-items:flex-end;padding:14px;font-weight:600;font-size:.9rem}
+.ba .before{background:repeating-linear-gradient(115deg,color-mix(in srgb,var(--muted) 30%,var(--glass)) 0 6px,color-mix(in srgb,var(--muted) 18%,var(--glass)) 6px 14px)}
+.ba .after{background:linear-gradient(160deg,var(--glass),var(--surface))}
+
+/* Formulario */
+form{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field.full{grid-column:1/-1}
+label{font-weight:600;font-size:.9rem}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;width:100%}
+textarea{min-height:120px;resize:vertical}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips input{position:absolute;opacity:0;width:1px;height:1px}
+.chips label{padding:9px 16px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-weight:500;background:var(--bg)}
+.chips input:checked + label{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chips input:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px}
+.ok{grid-column:1/-1;background:var(--glass);border-radius:10px;padding:14px 16px;font-weight:500}
+@media (max-width:620px){form{grid-template-columns:1fr}}
+.contact-grid{display:grid;grid-template-columns:1.4fr .6fr;gap:32px;align-items:start}
+@media (max-width:820px){.contact-grid{grid-template-columns:1fr}}
+.contact-line{display:flex;flex-direction:column;gap:2px;padding-block:12px;border-bottom:1px solid var(--line)}
+.contact-line span{color:var(--muted);font-size:.85rem}
+.contact-line b{user-select:all}
+
+footer{background:var(--deep);color:var(--deep-fg);padding-block:40px}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:.9rem}
+.foot p{color:color-mix(in srgb,var(--deep-fg) 70%,transparent)}
+.foot a{text-decoration:none}
+.foot nav{display:flex;gap:16px;flex-wrap:wrap}
+
+.page-head{padding-block:56px 40px;border-bottom:1px solid var(--line)}
+.page-head .stack{max-width:720px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#inicio" data-go="inicio"><span class="logo-mark" aria-hidden="true"></span>Crystal View</a>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="menu">Menú</button>
+    <ul class="menu" id="menu">
+      <li><a href="#inicio" data-go="inicio">Inicio</a></li>
+      <li><a href="#ventanas" data-go="ventanas">Ventanas</a></li>
+      <li><a href="#propiedades" data-go="propiedades">Propiedades</a></li>
+      <li><a href="#nosotros" data-go="nosotros">Nosotros</a></li>
+      <li><a href="#contacto" data-go="contacto" class="cta-link">Cotizar</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+<!-- ============ INICIO ============ -->
+<section data-page="inicio">
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div class="stack">
+        <span class="eyebrow">Limpieza de ventanas · Administración de propiedades</span>
+        <h1>Tu propiedad impecable y bien administrada</h1>
+        <p class="lead">Limpiamos vidrios de casas, locales y edificios, y nos encargamos de tus alquileres de principio a fin. Un solo equipo cuidando lo que es tuyo en San Ramón y alrededores.</p>
+        <div class="btns">
+          <a class="btn btn-primary" href="#contacto" data-go="contacto">Pedir cotización</a>
+          <a class="btn btn-ghost" href="#nosotros" data-go="nosotros">Ver plan combinado</a>
+        </div>
+      </div>
+      <div class="hero-card" aria-label="Datos de la empresa">
+        <span class="eyebrow">En números</span>
+        <div class="row"><span>Ventanas limpiadas este año</span><b>3 480</b></div>
+        <div class="row"><span>Propiedades administradas</span><b>42</b></div>
+        <div class="row"><span>Ocupación promedio de alquileres</span><b>94 %</b></div>
+        <div class="row"><span>Respuesta a cotizaciones</span><b>&lt; 24 h</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band alt"><div class="wrap stack" style="gap:28px">
+    <div class="stack"><span class="eyebrow">Qué hacemos</span><h2>Dos servicios, una misma idea: cuidar tu propiedad</h2></div>
+    <div class="split">
+      <a class="service" href="#ventanas" data-go="ventanas">
+        <span class="eyebrow">Servicio 1</span>
+        <h3 style="font-size:1.6rem">Limpieza de ventanas</h3>
+        <p>Vidrios sin marcas por dentro y por fuera, marcos y rieles incluidos. Trabajo en altura con equipo certificado.</p>
+        <ul><li>Casas y apartamentos</li><li>Locales y oficinas</li><li>Edificios de hasta 6 pisos</li></ul>
+        <span class="go">Ver servicio →</span>
+      </a>
+      <a class="service dark" href="#propiedades" data-go="propiedades">
+        <span class="eyebrow">Servicio 2</span>
+        <h3 style="font-size:1.6rem">Administración de propiedades</h3>
+        <p>Buscamos inquilinos, cobramos el alquiler, coordinamos mantenimiento y te mandamos un reporte cada mes.</p>
+        <ul><li>Casas y apartamentos de alquiler</li><li>Alquiler por temporada</li><li>Condominios pequeños</li></ul>
+        <span class="go">Ver servicio →</span>
+      </a>
+    </div>
+  </div></div>
+
+  <div class="band"><div class="wrap stack" style="gap:28px">
+    <div class="stack"><span class="eyebrow">Por qué nosotros</span><h2>Lo que nos diferencia</h2></div>
+    <div class="grid3">
+      <div class="feat"><h3>Un solo contacto</h3><p>Una persona responde por tu propiedad, sea una limpieza o un inquilino atrasado.</p></div>
+      <div class="feat"><h3>Precios claros</h3><p>Cotización por escrito antes de empezar. Sin cobros sorpresa al final.</p></div>
+      <div class="feat"><h3>Equipo asegurado</h3><p>Personal en planilla con póliza de riesgos del trabajo del INS.</p></div>
+    </div>
+  </div></div>
+
+  <div class="band alt"><div class="wrap stack" style="gap:28px">
+    <div class="stack"><span class="eyebrow">Clientes</span><h2>Lo que dicen</h2></div>
+    <div class="grid2">
+      <div class="box quote"><blockquote>Tengo dos casas alquiladas y ya no tengo que perseguir a nadie para el pago. Cada mes me llega el reporte y la plata.</blockquote><cite>Marta R., propietaria en Palmares</cite></div>
+      <div class="box quote"><blockquote>Limpian los ventanales del local cada mes y quedan como nuevos. Llegan puntuales y no dejan desorden.</blockquote><cite>Andrés V., cafetería en San Ramón centro</cite></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============ VENTANAS ============ -->
+<section data-page="ventanas" hidden>
+  <div class="page-head"><div class="wrap stack">
+    <span class="eyebrow">Servicio 1</span>
+    <h1>Limpieza de ventanas</h1>
+    <p class="lead">Vidrios limpios por dentro y por fuera, marcos, rieles y cedazos incluidos. Usamos agua desmineralizada para que no queden manchas cuando seca.</p>
+  </div></div>
+
+  <div class="band"><div class="wrap stack" style="gap:28px">
+    <h2>Para quién trabajamos</h2>
+    <div class="grid3">
+      <div class="box"><span class="tag">Residencial</span><h3>Casas y apartamentos</h3><p>Limpieza completa de todas las ventanas, puertas de vidrio y barandas.</p></div>
+      <div class="box"><span class="tag">Comercial</span><h3>Locales y oficinas</h3><p>Vitrinas y fachadas, en horario fuera de atención para no interrumpir.</p></div>
+      <div class="box"><span class="tag">Altura</span><h3>Edificios</h3><p>Hasta 6 pisos con andamio o pértiga telescópica y arnés certificado.</p></div>
+    </div>
+  </div></div>
+
+  <div class="band alt"><div class="wrap stack" style="gap:28px">
+    <div class="stack"><h2>Frecuencias y precios de referencia</h2><p class="lead">Precio por ventana estándar (hasta 1,5 m²), por ambos lados. El precio final se confirma en la visita.</p></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Frecuencia</th><th>Ideal para</th><th>Por ventana</th></tr></thead>
+      <tbody>
+        <tr><td>Única vez</td><td>Mudanzas, entregas de casa</td><td>₡3 500</td></tr>
+        <tr><td>Trimestral</td><td>Casas</td><td>₡3 000</td></tr>
+        <tr><td>Mensual</td><td>Locales y oficinas</td><td>₡2 500</td></tr>
+        <tr><td>Quincenal</td><td>Vitrinas comerciales</td><td>₡2 000</td></tr>
+      </tbody>
+    </table></div>
+  </div></div>
+
+  <div class="band"><div class="wrap stack" style="gap:28px">
+    <h2>Antes y después</h2>
+    <div class="grid2">
+      <div class="ba" role="img" aria-label="Espacio para foto de antes y después, fachada de local"><div class="before">Antes</div><div class="after">Después</div></div>
+      <div class="ba" role="img" aria-label="Espacio para foto de antes y después, ventanal de casa"><div class="before">Antes</div><div class="after">Después</div></div>
+    </div>
+    <div class="btns"><a class="btn btn-primary" href="#contacto" data-go="contacto">Cotizar limpieza</a></div>
+  </div></div>
+</section>
+
+<!-- ============ PROPIEDADES ============ -->
+<section data-page="propiedades" hidden>
+  <div class="page-head"><div class="wrap stack">
+    <span class="eyebrow">Servicio 2</span>
+    <h1>Administración de propiedades</h1>
+    <p class="lead">Tenés la propiedad, nosotros nos encargamos del resto: inquilinos, cobros, reparaciones y papeleo. Vos solo recibís el depósito y el reporte.</p>
+  </div></div>
+
+  <div class="band"><div class="wrap stack" style="gap:28px">
+    <h2>Qué incluye</h2>
+    <div class="grid3">
+      <div class="box"><span class="tag">Inquilinos</span><h3>Búsqueda y selección</h3><p>Publicamos, mostramos la propiedad y revisamos referencias antes de firmar.</p></div>
+      <div class="box"><span class="tag">Contratos</span><h3>Contrato y depósito</h3><p>Contrato según la Ley General de Arrendamientos Urbanos y Suburbanos.</p></div>
+      <div class="box"><span class="tag">Cobros</span><h3>Cobro mensual</h3><p>Cobramos el alquiler y te lo depositamos los primeros 5 días de cada mes.</p></div>
+      <div class="box"><span class="tag">Mantenimiento</span><h3>Reparaciones</h3><p>Coordinamos fontanería, electricidad y pintura con proveedores de confianza.</p></div>
+      <div class="box"><span class="tag">Inspección</span><h3>Revisiones periódicas</h3><p>Visitamos la propiedad cada 3 meses y te mandamos fotos del estado.</p></div>
+      <div class="box"><span class="tag">Reportes</span><h3>Reporte mensual</h3><p>Ingresos, gastos y pendientes en un solo documento claro.</p></div>
+    </div>
+  </div></div>
+
+  <div class="band alt"><div class="wrap stack" style="gap:28px">
+    <h2>Cómo empezamos</h2>
+    <ol class="steps">
+      <li><h3>Visita</h3><p>Conocemos la propiedad y lo que esperás de ella.</p></li>
+      <li><h3>Propuesta</h3><p>Precio de alquiler sugerido y comisión por escrito.</p></li>
+      <li><h3>Preparación</h3><p>Limpieza, fotos y arreglos antes de publicar.</p></li>
+      <li><h3>Administración</h3><p>Inquilino adentro y reporte cada mes.</p></li>
+    </ol>
+  </div></div>
+
+  <div class="band"><div class="wrap stack" style="gap:20px">
+    <h2>Comisión</h2>
+    <p class="lead">8 % del alquiler mensual cobrado. Si la propiedad está desocupada, no cobramos comisión ese mes.</p>
+    <div class="btns"><a class="btn btn-primary" href="#contacto" data-go="contacto">Agendar visita</a></div>
+  </div></div>
+</section>
+
+<!-- ============ NOSOTROS ============ -->
+<section data-page="nosotros" hidden>
+  <div class="page-head"><div class="wrap stack">
+    <span class="eyebrow">Nosotros</span>
+    <h1>Empezamos limpiando ventanas y terminamos cuidando casas</h1>
+    <p class="lead">Crystal View nació en 2018 limpiando vidrios en San Ramón. Varios clientes eran dueños de casas de alquiler y nos empezaron a pedir que les ayudáramos con más cosas. Así llegó la administración.</p>
+  </div></div>
+
+  <div class="band"><div class="wrap">
+    <div class="combo">
+      <div class="stack">
+        <span class="eyebrow" style="color:var(--accent)">Plan combinado</span>
+        <h2>Propiedad Impecable</h2>
+        <p>Si administramos tu propiedad, la limpieza de ventanas trimestral va incluida. La casa se ve mejor en fotos, se alquila más rápido y el inquilino la recibe limpia.</p>
+      </div>
+      <div class="stack">
+        <span class="price">8 %</span>
+        <p>del alquiler mensual, con limpieza trimestral incluida</p>
+        <a class="btn btn-primary" href="#contacto" data-go="contacto" style="align-self:flex-start">Quiero este plan</a>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="band alt"><div class="wrap stack" style="gap:28px">
+    <h2>El equipo</h2>
+    <div class="grid3">
+      <div class="box"><h3>Carlos Rojas</h3><span class="tag">Fundador</span><p>Coordina las cuadrillas de limpieza y los trabajos en altura.</p></div>
+      <div class="box"><h3>Daniela Mora</h3><span class="tag">Administración</span><p>Atiende propietarios e inquilinos, cobros y contratos.</p></div>
+      <div class="box"><h3>Cuadrilla técnica</h3><span class="tag">6 personas</span><p>Limpieza, inspecciones y mantenimiento menor.</p></div>
+    </div>
+  </div></div>
+
+  <div class="band"><div class="wrap stack" style="gap:16px">
+    <h2>Zona de cobertura</h2>
+    <p class="lead">San Ramón, Palmares, Naranjo, Zarcero y Grecia. Para otras zonas de Alajuela, consultanos.</p>
+  </div></div>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section data-page="contacto" hidden>
+  <div class="page-head"><div class="wrap stack">
+    <span class="eyebrow">Contacto</span>
+    <h1>Pedí tu cotización</h1>
+    <p class="lead">Contanos qué necesitás y te respondemos en menos de 24 horas hábiles.</p>
+  </div></div>
+
+  <div class="band"><div class="wrap contact-grid">
+    <form id="quote" novalidate>
+      <div class="field full">
+        <span style="font-weight:600;font-size:.9rem">¿Qué servicio te interesa?</span>
+        <div class="chips">
+          <input type="radio" name="svc" id="svc-v" value="Ventanas" checked><label for="svc-v">Ventanas</label>
+          <input type="radio" name="svc" id="svc-p" value="Administración"><label for="svc-p">Administración</label>
+          <input type="radio" name="svc" id="svc-a" value="Ambos"><label for="svc-a">Ambos</label>
+        </div>
+      </div>
+      <div class="field"><label for="f-name">Nombre</label><input id="f-name" required autocomplete="name"></div>
+      <div class="field"><label for="f-phone">Teléfono / WhatsApp</label><input id="f-phone" type="tel" required autocomplete="tel" placeholder="8888 8888"></div>
+      <div class="field"><label for="f-type">Tipo de propiedad</label>
+        <select id="f-type"><option>Casa</option><option>Apartamento</option><option>Local u oficina</option><option>Edificio</option></select></div>
+      <div class="field"><label for="f-town">Cantón</label>
+        <select id="f-town"><option>San Ramón</option><option>Palmares</option><option>Naranjo</option><option>Zarcero</option><option>Grecia</option><option>Otro</option></select></div>
+      <div class="field full"><label for="f-msg">Detalles</label><textarea id="f-msg" placeholder="Ej.: casa de dos pisos con 12 ventanas, la quiero alquilar en enero"></textarea></div>
+      <div class="field full"><button class="btn btn-primary" type="submit" style="justify-self:start">Enviar solicitud</button></div>
+      <p class="ok" id="ok" hidden role="status"></p>
+    </form>
+    <aside>
+      <div class="contact-line"><span>WhatsApp</span><b>+506 8888 8888</b></div>
+      <div class="contact-line"><span>Correo</span><b>hola@crystalview.cr</b></div>
+      <div class="contact-line"><span>Horario</span><b>Lun a sáb, 7:00 a 17:00</b></div>
+      <div class="contact-line"><span>Oficina</span><b>100 m norte del parque, San Ramón</b></div>
+    </aside>
+  </div></div>
+</section>
+</main>
+
+<footer><div class="wrap foot">
+  <div class="stack" style="gap:6px"><b style="font-family:var(--f-display);font-size:1.1rem">Crystal View Property Management</b><p>Limpieza de ventanas y administración de propiedades · Alajuela, Costa Rica</p></div>
+  <nav aria-label="Pie de página">
+    <a href="#ventanas" data-go="ventanas">Ventanas</a><a href="#propiedades" data-go="propiedades">Propiedades</a><a href="#nosotros" data-go="nosotros">Nosotros</a><a href="#contacto" data-go="contacto">Contacto</a>
+  </nav>
+</div></footer>
+
+<script>
+(function(){
+  const pages=[...document.querySelectorAll('[data-page]')];
+  const links=[...document.querySelectorAll('.menu a')];
+  const menu=document.getElementById('menu'), burger=document.getElementById('burger');
+  function show(id){
+    if(!pages.some(p=>p.dataset.page===id)) id='inicio';
+    pages.forEach(p=>p.hidden=p.dataset.page!==id);
+    links.forEach(a=>a.dataset.go===id?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+    menu.classList.remove('open'); burger.setAttribute('aria-expanded','false');
+    window.scrollTo(0,0);
+  }
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('[data-go]'); if(!a) return;
+    e.preventDefault(); show(a.dataset.go);
+    try{history.replaceState(null,'','#'+a.dataset.go)}catch(_){}
+  });
+  burger.addEventListener('click',()=>{const o=menu.classList.toggle('open');burger.setAttribute('aria-expanded',o)});
+  show((location.hash||'').slice(1)||'inicio');
+
+  document.getElementById('quote').addEventListener('submit',e=>{
+    e.preventDefault();
+    const name=document.getElementById('f-name').value.trim();
+    const phone=document.getElementById('f-phone').value.trim();
+    const ok=document.getElementById('ok');
+    if(!name||!phone){ok.textContent='Falta tu nombre o teléfono para poder contactarte.';ok.hidden=false;return;}
+    const svc=document.querySelector('input[name="svc"]:checked').value;
+    ok.textContent='Listo, '+name+'. Recibimos tu solicitud de '+svc.toLowerCase()+' (demo: en el sitio real esto se enviaría por correo o WhatsApp).';
+    ok.hidden=false; e.target.reset();
+  });
+})();
+</script>
