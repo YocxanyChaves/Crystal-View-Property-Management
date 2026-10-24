@@ -1,0 +1,32 @@
+/* ===== Por qué nosotros: el balde se voltea y el limpiador deja todo a la vista ===== */
+.why{position:relative;z-index:2}
+.bucket-wrap{position:absolute;top:-74px;right:clamp(150px,15vw,240px);width:clamp(76px,8vw,104px);z-index:6;pointer-events:none;transition:opacity .8s 1.2s}
+.bucket-big{display:block;width:100%;height:auto;overflow:visible;transform-origin:14% 95%;filter:drop-shadow(0 12px 14px rgba(10,37,64,.3));animation:bucketWobble 2.4s ease-in-out infinite}
+@keyframes bucketWobble{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+/* Se levanta, toma impulso hacia atrás y se vuelca hacia la izquierda: la boca queda mirando abajo a la izquierda */
+.why.pouring .bucket-big{animation:bucketTip 1.15s cubic-bezier(.45,0,.3,1) forwards}
+@keyframes bucketTip{
+  0%{transform:rotate(0)}
+  24%{transform:translateY(-8px) rotate(11deg)}
+  68%{transform:translate(-3px,1px) rotate(-130deg)}
+  84%{transform:translate(-2px,0) rotate(-117deg)}
+  100%{transform:translate(-2px,0) rotate(-122deg)}
+}
+.why.clean .bucket-wrap{opacity:0}
+/* Lienzo del agua: sube por encima de la sección para que el chorro salga desde la boca del balde */
+.splash{display:none}
+.js .why .splash{display:block;position:absolute;left:0;top:-170px;width:100%;height:calc(100% + 170px);z-index:5;pointer-events:none;transition:opacity .7s}
+.grime{display:none}
+.js .why .grime{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;
+  -webkit-backdrop-filter:blur(7px) saturate(.5);backdrop-filter:blur(7px) saturate(.5);transition:opacity .7s}
+/* Mancha mojada que se abre desde donde cae el agua (--wx lo calcula why.js) */
+.wet{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:.9;
+  background:linear-gradient(180deg,rgba(120,200,240,.38),rgba(120,200,240,.14) 70%),repeating-linear-gradient(95deg,transparent 0 38px,rgba(255,255,255,.18) 38px 40px);
+  clip-path:circle(0 at var(--wx,calc(100% - 200px)) 0);transition:clip-path 1.6s cubic-bezier(.3,.1,.4,1) .75s,opacity .7s}
+.why.pouring .wet{clip-path:circle(160% at var(--wx,calc(100% - 200px)) 0)}
+.streak{position:absolute;top:0;bottom:0;left:0;width:14px;margin-left:-7px;z-index:6;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.95) 45%,rgba(159,224,255,.9) 55%,transparent)}
+.why.wiping .streak{opacity:1}
+.why.clean .grime,.why.clean .wet,.why.clean .streak,.why.clean .splash{opacity:0}
+.why.clean .why-head h2{animation:sparkle .9s var(--ease-out)}
+@keyframes sparkle{0%{transform:scale(.94);filter:brightness(1.8)}50%{transform:scale(1.04)}100%{transform:none;filter:none}}

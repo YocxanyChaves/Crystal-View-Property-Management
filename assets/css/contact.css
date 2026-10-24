@@ -1,0 +1,22 @@
+/* ===== Formulario ===== */
+form{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field.full{grid-column:1/-1}
+label{font-weight:700;font-size:.88rem}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--sky-3);box-shadow:0 0 0 4px rgba(79,176,227,.18)}
+textarea{min-height:120px;resize:vertical}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips input{position:absolute;opacity:0;width:1px;height:1px}
+.chips label{padding:9px 16px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-family:var(--f-cond);font-size:1rem;letter-spacing:.04em;font-weight:600;background:var(--surface);transition:all .2s}
+.chips input:checked + label{background:var(--navy);color:var(--accent-ink);border-color:var(--navy)}
+.chips input:focus-visible + label{outline:3px solid var(--sky-3);outline-offset:2px}
+.ok{grid-column:1/-1;background:var(--sky);border-radius:12px;padding:14px 16px;font-weight:600}
+@media (max-width:620px){form{grid-template-columns:1fr}}
+.contact-grid{display:grid;grid-template-columns:1.4fr .6fr;gap:32px;align-items:start}
+@media (max-width:820px){.contact-grid{grid-template-columns:1fr}}
+.contact-grid aside{padding:8px 24px;border-radius:20px;background:var(--navy);color:var(--on-dark)}
+.contact-line{display:flex;flex-direction:column;gap:2px;padding-block:14px;border-bottom:1px solid rgba(255,255,255,.12)}
+.contact-line:last-child{border:0}
+.contact-line span{color:var(--sky-2);font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.contact-line b{user-select:all;font-weight:600}

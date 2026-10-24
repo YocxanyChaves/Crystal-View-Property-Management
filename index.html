@@ -10,7 +10,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/intro.css">
+<link rel="stylesheet" href="assets/css/header.css">
+<link rel="stylesheet" href="assets/css/hero.css">
+<link rel="stylesheet" href="assets/css/services.css">
+<link rel="stylesheet" href="assets/css/why.css">
+<link rel="stylesheet" href="assets/css/sponges.css">
+<link rel="stylesheet" href="assets/css/testimonials.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/faq.css">
+<link rel="stylesheet" href="assets/css/contact.css">
+<link rel="stylesheet" href="assets/css/cleaner.css">
+<link rel="stylesheet" href="assets/css/motion.css">
 </head>
 <body class="locked">
 
@@ -137,6 +149,7 @@
             <figure class="slide" id="cv-3"><img src="assets/img/ventanas-edificio.webp" alt="Técnicos colgados de cuerdas limpiando las ventanas de un edificio" width="1024" height="768" loading="lazy"><figcaption><small>Altura</small>Edificios de hasta 6 pisos</figcaption></figure>
             <button class="car-btn prev" type="button" aria-label="Foto anterior">‹</button>
             <button class="car-btn next" type="button" aria-label="Foto siguiente">›</button>
+            <span class="tap-hint" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M8 1v3M8 12v3M1 8h3M12 8h3M3 3l2 2M11 11l2 2M13 3l-2 2M5 11l-2 2"/></svg>Tocá la foto</span>
           </div>
           <div class="glass-body">
             <span class="eyebrow">Servicio 1</span>
@@ -169,6 +182,7 @@
             <figure class="slide" id="cp-3"><img src="assets/img/alquiler-condominio.webp" alt="Fachada de un condominio con balcones y ventanas celestes" width="960" height="638" loading="lazy"><figcaption><small>Comunidades</small>Condominios pequeños</figcaption></figure>
             <button class="car-btn prev" type="button" aria-label="Foto anterior">‹</button>
             <button class="car-btn next" type="button" aria-label="Foto siguiente">›</button>
+            <span class="tap-hint" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M8 1v3M8 12v3M1 8h3M12 8h3M3 3l2 2M11 11l2 2M13 3l-2 2M5 11l-2 2"/></svg>Tocá la foto</span>
           </div>
           <div class="glass-body">
             <span class="eyebrow">Servicio 2</span>
@@ -204,12 +218,12 @@
         <path d="M14 31 H86 L78 104 H22 Z" fill="#4fb0e3"/>
         <path d="M14 31 H32 L27 104 H22 Z" fill="#fff" opacity=".25"/>
         <rect x="17" y="62" width="66" height="8" fill="#1670b3"/>
-        <ellipse cx="50" cy="31" rx="36" ry="5.5" fill="#bfeaff"/>
+        <ellipse class="surf" cx="50" cy="31" rx="36" ry="5.5" fill="#bfeaff"/>
         <rect x="9" y="26" width="82" height="9" rx="4.5" fill="#0f5a94"/>
         <circle cx="16" cy="30" r="3" fill="#c8a774"/><circle cx="84" cy="30" r="3" fill="#c8a774"/>
+        <!-- Puntos de referencia para el agua: los dos bordes de la boca y el centro del balde -->
+        <circle class="lip-a" cx="10" cy="30" r=".5" fill="none"/><circle class="lip-b" cx="90" cy="30" r=".5" fill="none"/><circle class="b-mid" cx="50" cy="70" r=".5" fill="none"/>
       </svg>
-      <span class="water"></span>
-      <span class="drop"></span><span class="drop"></span><span class="drop"></span><span class="drop"></span><span class="drop"></span>
     </div>
     <div class="wrap stack" style="gap:44px">
       <div class="stack center why-head">
@@ -249,14 +263,175 @@
     </div>
     <canvas class="grime" aria-hidden="true"></canvas>
     <span class="wet" aria-hidden="true"></span>
+    <canvas class="splash" aria-hidden="true"></canvas>
     <span class="streak" aria-hidden="true"></span>
   </div>
 
-  <div class="band mist"><div class="wrap stack" style="gap:36px">
-    <div class="stack center" data-reveal><span class="eyebrow">Clientes</span><h2>Lo que <em>dicen</em></h2></div>
-    <div class="grid2">
-      <div class="box quote" data-reveal><blockquote>Tengo dos casas alquiladas y ya no tengo que perseguir a nadie para el pago. Cada mes me llega el reporte y la plata.</blockquote><cite>Marta R., propietaria en Palmares</cite></div>
-      <div class="box quote" data-reveal style="--d:140ms"><blockquote>Limpian los ventanales del local cada mes y quedan como nuevos. Llegan puntuales y no dejan desorden.</blockquote><cite>Andrés V., cafetería en San Ramón centro</cite></div>
+  <!-- Clientes saludando desde sus ventanas: al pasar el mouse el vidrio se ensucia y la escobilla lo limpia -->
+  <div class="band mist"><div class="wrap stack" style="gap:20px">
+    <div class="stack center" data-reveal>
+      <span class="eyebrow">Clientes</span><h2>Lo que <em>dicen</em></h2>
+      <p class="lead" id="homesHint">Nos saludan desde sus ventanas recién limpias. Pasá el mouse por una y mirá lo rápido que la dejamos brillando.</p>
+    </div>
+    <div class="homes">
+
+      <figure class="home home--house">
+        <div class="facade">
+          <div class="pane transom">
+            <svg class="inside" viewBox="0 0 200 140" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+              <rect width="200" height="140" fill="#f7e6c8"/>
+              <rect y="122" width="200" height="18" fill="#ead3ad"/>
+              <rect x="134" y="44" width="40" height="30" rx="2" fill="#fff" stroke="#c8a774" stroke-width="3"/>
+              <path d="M140 70l10-12 7 7 5-5 8 10z" fill="#9cc4a3"/><circle cx="164" cy="53" r="3.5" fill="#f5c542"/>
+              <path d="M28 40v22" stroke="#8a7a66" stroke-width="1.5"/><path d="M18 72h20l-4-11h-12z" fill="#f5c542"/>
+              <g transform="translate(84 0)"><g class="person">
+                <path d="M-19 74q0-27 19-27t19 27v32h-38z" fill="#5a3825"/>
+                <path d="M-26 140v-24q0-22 26-22t26 22v24z" fill="#e8735a"/>
+                <rect x="-5" y="82" width="10" height="14" rx="3" fill="#e8b48a"/>
+                <circle cy="70" r="16" fill="#e8b48a"/>
+                <path d="M-16 68q1-19 16-19t16 19q-9-9-20-10q-5 5-12 10z" fill="#5a3825"/>
+                <circle cx="-6" cy="71" r="1.7" fill="#1d2b36"/><circle cx="6" cy="71" r="1.7" fill="#1d2b36"/>
+                <path d="M-6 77q6 5 12 0" stroke="#1d2b36" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+                <circle cx="-10" cy="76" r="2.6" fill="#f08d74" opacity=".45"/><circle cx="10" cy="76" r="2.6" fill="#f08d74" opacity=".45"/>
+                <g class="wave"><path d="M18 106L29 88L31 64" stroke="#e8735a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="31" cy="59" r="6" fill="#e8b48a"/></g>
+              </g></g>
+            </svg>
+            <span class="glass"></span><canvas class="smudge"></canvas><span class="squeegee"></span>
+          </div>
+          <span class="sill"></span>
+        </div>
+        <figcaption class="say">
+          <blockquote>Tengo dos casas alquiladas y ya no tengo que perseguir a nadie para el pago. Cada mes me llega el reporte y la plata.</blockquote>
+          <cite>Marta R., propietaria en Palmares</cite>
+        </figcaption>
+      </figure>
+
+      <figure class="home home--cafe">
+        <div class="facade">
+          <span class="awning" aria-hidden="true"></span>
+          <div class="pane">
+            <svg class="inside" viewBox="0 0 200 140" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+              <rect width="200" height="140" fill="#efe1cf"/>
+              <rect x="12" y="38" width="54" height="38" rx="3" fill="#2b2f33"/>
+              <path d="M20 49h30M20 57h38M20 65h24" stroke="#f4efe6" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+              <path d="M152 0v38M180 0v44" stroke="#5b4a3a" stroke-width="1.2"/>
+              <path d="M144 46h16l-3-8h-10z" fill="#c8a774"/><path d="M172 52h16l-3-8h-10z" fill="#c8a774"/>
+              <rect y="118" width="200" height="22" fill="#8a5a2b"/><rect y="114" width="200" height="5" fill="#a8743f"/>
+              <path d="M150 104h12v7q0 4-6 4t-6-4z" fill="#fff"/><path d="M162 106q4 0 4 3t-4 3" stroke="#fff" stroke-width="1.6" fill="none"/>
+              <g transform="translate(100 0)"><g class="person">
+                <path d="M-26 140v-24q0-22 26-22t26 22v24z" fill="#f4f4f4"/>
+                <path d="M-14 140v-30h28v30z" fill="#8a5a2b"/><path d="M-12 111l-7-13M12 111l7-13" stroke="#8a5a2b" stroke-width="3"/>
+                <rect x="-5" y="82" width="10" height="14" rx="3" fill="#c98b62"/>
+                <circle cy="70" r="16" fill="#c98b62"/>
+                <path d="M-16 67q0-19 16-19t16 19q-4-9-16-9t-16 9z" fill="#2b2118"/>
+                <circle cx="-6" cy="70" r="1.7" fill="#1d2b36"/><circle cx="6" cy="70" r="1.7" fill="#1d2b36"/>
+                <path d="M-8 76q8-5 16 0q-8 3-16 0z" fill="#2b2118"/>
+                <path d="M-5 80q5 3.5 10 0" stroke="#1d2b36" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+                <g class="wave" style="animation-delay:-.4s"><path d="M18 106L29 88L31 64" stroke="#f4f4f4" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="31" cy="59" r="6" fill="#c98b62"/></g>
+              </g></g>
+              <text x="100" y="26" text-anchor="middle" font-family="Big Shoulders Display, Impact, sans-serif" font-weight="900" font-size="17" letter-spacing="3" fill="#fff" opacity=".9">CAFÉ · SAN RAMÓN</text>
+            </svg>
+            <span class="glass"></span><canvas class="smudge"></canvas><span class="squeegee"></span>
+          </div>
+          <span class="sill"></span>
+        </div>
+        <figcaption class="say">
+          <blockquote>Limpian los ventanales del local cada mes y quedan como nuevos. Llegan puntuales y no dejan desorden.</blockquote>
+          <cite>Andrés V., cafetería en San Ramón centro</cite>
+        </figcaption>
+      </figure>
+
+      <figure class="home home--family">
+        <div class="facade">
+          <div class="pane transom">
+            <svg class="inside" viewBox="0 0 200 140" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+              <rect width="200" height="140" fill="#e2f1e7"/>
+              <rect y="124" width="200" height="16" fill="#cfe3d5"/>
+              <rect x="88" y="40" width="26" height="20" rx="2" fill="#fff" stroke="#b8583f" stroke-width="2.5"/>
+              <g transform="translate(56 0)"><g class="person">
+                <path d="M-26 140v-24q0-22 26-22t26 22v24z" fill="#2f8f83"/>
+                <rect x="-5" y="82" width="10" height="14" rx="3" fill="#d9a07a"/>
+                <circle cy="70" r="16" fill="#d9a07a"/>
+                <path d="M-16 66q0-18 16-18t16 18q-5-7-16-7t-16 7z" fill="#3a2a1e"/>
+                <path d="M-12 76q0 10 12 10t12-10q-4 4-12 4t-12-4z" fill="#3a2a1e" opacity=".85"/>
+                <circle cx="-6" cy="70" r="1.7" fill="#1d2b36"/><circle cx="6" cy="70" r="1.7" fill="#1d2b36"/>
+                <path d="M-5 77q5 3.5 10 0" stroke="#f4f4f4" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+                <g class="wave"><path d="M18 106L29 88L31 64" stroke="#2f8f83" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="31" cy="59" r="6" fill="#d9a07a"/></g>
+              </g></g>
+              <g transform="translate(144 0)"><g class="person">
+                <circle cy="46" r="8" fill="#8a4b2a"/>
+                <path d="M-26 140v-24q0-22 26-22t26 22v24z" fill="#f2b33d"/>
+                <rect x="-5" y="82" width="10" height="14" rx="3" fill="#f0c4a0"/>
+                <circle cy="70" r="16" fill="#f0c4a0"/>
+                <path d="M-16 69q0-20 16-20t16 20q-6-10-16-10t-16 10z" fill="#8a4b2a"/>
+                <circle cx="-6" cy="71" r="1.7" fill="#1d2b36"/><circle cx="6" cy="71" r="1.7" fill="#1d2b36"/>
+                <path d="M-6 77q6 5 12 0" stroke="#1d2b36" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+                <circle cx="-10" cy="76" r="2.6" fill="#f08d74" opacity=".45"/><circle cx="10" cy="76" r="2.6" fill="#f08d74" opacity=".45"/>
+                <g class="wave l" style="animation-delay:-.7s"><path d="M-18 106L-29 88L-31 64" stroke="#f2b33d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="-31" cy="59" r="6" fill="#f0c4a0"/></g>
+              </g></g>
+              <g transform="translate(100 40) scale(.7)"><g class="person">
+                <path d="M-26 140v-24q0-22 26-22t26 22v24z" fill="#e5484d"/>
+                <rect x="-5" y="82" width="10" height="14" rx="3" fill="#e8b48a"/>
+                <circle cy="70" r="17" fill="#e8b48a"/>
+                <path d="M-17 68q0-20 17-20t17 20q-3-12-17-12t-17 12z" fill="#5a3825"/>
+                <circle cx="-6" cy="71" r="2" fill="#1d2b36"/><circle cx="6" cy="71" r="2" fill="#1d2b36"/>
+                <path d="M-7 77q7 7 14 0z" fill="#1d2b36"/>
+                <g class="wave" style="animation-delay:-.2s"><path d="M18 106L29 88L31 64" stroke="#e5484d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="31" cy="59" r="6.5" fill="#e8b48a"/></g>
+                <g class="wave l" style="animation-delay:-.95s"><path d="M-18 106L-29 88L-31 64" stroke="#e5484d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="-31" cy="59" r="6.5" fill="#e8b48a"/></g>
+              </g></g>
+            </svg>
+            <span class="glass"></span><canvas class="smudge"></canvas><span class="squeegee"></span>
+          </div>
+          <span class="sill"></span>
+        </div>
+        <figcaption class="say">
+          <blockquote>Nos ayudaron a alquilar la casa de mi mamá y cada tres meses nos limpian las ventanas. Todo con la misma gente de confianza.</blockquote>
+          <cite>Familia Quesada, casa en Naranjo</cite>
+        </figcaption>
+      </figure>
+
+      <figure class="home home--office">
+        <div class="facade">
+          <div class="pane">
+            <svg class="inside" viewBox="0 0 200 140" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+              <rect width="200" height="140" fill="#e7eef5"/>
+              <rect x="150" y="30" width="44" height="4" fill="#9aa9b5"/><rect x="150" y="62" width="44" height="4" fill="#9aa9b5"/>
+              <rect x="154" y="12" width="7" height="18" fill="#1670b3"/><rect x="162" y="15" width="7" height="15" fill="#c8a774"/><rect x="170" y="12" width="7" height="18" fill="#0a2540"/>
+              <rect x="156" y="45" width="7" height="17" fill="#4fb0e3"/><rect x="164" y="45" width="7" height="17" fill="#1670b3"/>
+              <path d="M14 140v-20h22v20z" fill="#c8a774"/><ellipse cx="18" cy="106" rx="6" ry="15" fill="#86b48f" transform="rotate(-20 18 106)"/><ellipse cx="31" cy="104" rx="6" ry="16" fill="#9cc4a3" transform="rotate(18 31 104)"/>
+              <g transform="translate(72 0)"><g class="person">
+                <path d="M-18 72q0-25 18-25t18 25v16h-36z" fill="#1d1d22"/>
+                <path d="M-26 140v-24q0-22 26-22t26 22v24z" fill="#1b4a73"/>
+                <path d="M-8 96l8 16l8-16z" fill="#fff"/>
+                <rect x="-5" y="82" width="10" height="14" rx="3" fill="#b07a52"/>
+                <circle cy="70" r="16" fill="#b07a52"/>
+                <path d="M-17 72q-1-23 17-23t17 23q-4-12-17-13q-10 3-17 13z" fill="#1d1d22"/>
+                <circle cx="-6" cy="71" r="1.7" fill="#1d2b36"/><circle cx="6" cy="71" r="1.7" fill="#1d2b36"/>
+                <path d="M-6 77q6 5 12 0" stroke="#1d2b36" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+                <g class="wave"><path d="M18 106L29 88L31 64" stroke="#1b4a73" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="31" cy="59" r="6" fill="#b07a52"/></g>
+              </g></g>
+              <g transform="translate(134 0)"><g class="person">
+                <path d="M-26 140v-24q0-22 26-22t26 22v24z" fill="#6b7a88"/>
+                <path d="M-7 95l7 12l7-12z" fill="#fff"/><path d="M-2.5 99h5l1.5 22l-4 5l-4-5z" fill="#e5484d"/>
+                <rect x="-5" y="82" width="10" height="14" rx="3" fill="#e8b48a"/>
+                <circle cy="70" r="16" fill="#e8b48a"/>
+                <path d="M-16 66q0-18 16-18t16 18q-6-6-16-6t-16 6z" fill="#9aa4ad"/>
+                <circle cx="-6" cy="70" r="4.2" fill="none" stroke="#1d2b36" stroke-width="1.4"/><circle cx="6" cy="70" r="4.2" fill="none" stroke="#1d2b36" stroke-width="1.4"/><path d="M-1.8 70h3.6" stroke="#1d2b36" stroke-width="1.4"/>
+                <circle cx="-6" cy="70" r="1.5" fill="#1d2b36"/><circle cx="6" cy="70" r="1.5" fill="#1d2b36"/>
+                <path d="M-6 78q6 5 12 0" stroke="#1d2b36" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+                <g class="wave l" style="animation-delay:-.55s"><path d="M-18 106L-29 88L-31 64" stroke="#6b7a88" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="-31" cy="59" r="6" fill="#e8b48a"/></g>
+              </g></g>
+            </svg>
+            <span class="glass"></span><canvas class="smudge"></canvas><span class="squeegee"></span>
+          </div>
+          <span class="sill"></span>
+        </div>
+        <figcaption class="say">
+          <blockquote>Vienen un sábado al mes para no interrumpir a los clientes. La fachada de la oficina siempre se ve profesional.</blockquote>
+          <cite>Laura M., oficina contable en Grecia</cite>
+        </figcaption>
+      </figure>
+
     </div>
   </div></div>
 
@@ -523,6 +698,21 @@
   </div>
 </div>
 
+<script src="assets/js/core.js"></script>
+<script src="assets/js/dirt.js"></script>
+<script src="assets/js/cleaner.js"></script>
+<script src="assets/js/hero.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/js/shatter.js"></script>
+<script src="assets/js/carousel.js"></script>
+<script src="assets/js/water.js"></script>
+<script src="assets/js/why.js"></script>
+<script src="assets/js/sponges.js"></script>
+<script src="assets/js/testimonials.js"></script>
+<script src="assets/js/faq.js"></script>
+<script src="assets/js/effects.js"></script>
+<script src="assets/js/form.js"></script>
+<script src="assets/js/intro.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
