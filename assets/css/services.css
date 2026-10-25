@@ -45,48 +45,56 @@
 .glass-foot .from b{font-family:var(--f-display);font-weight:800;font-size:1.9rem;color:#fff;margin-left:4px}
 
 /* Carrusel */
-.carousel{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/10;background:var(--navy-3);touch-action:pan-y;user-select:none;
+.carousel{--door:cubic-bezier(.65,0,.2,1);position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/10;background:var(--navy-3);touch-action:pan-y;user-select:none;
   box-shadow:0 18px 40px rgba(2,12,26,.4),inset 0 0 0 1px rgba(255,255,255,.15)}
-.carousel.jelly{animation:jelly .85s cubic-bezier(.3,1.5,.5,1)}
-.carousel::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.5) 50%,transparent 65%);transform:translateX(-120%)}
-.carousel.jelly::after{animation:shine .9s ease}
-@keyframes jelly{0%{transform:none}18%{transform:scale(1.07,.9)}36%{transform:scale(.93,1.07)}54%{transform:scale(1.04,.97)}72%{transform:scale(.98,1.02)}100%{transform:none}}
-.slide{position:absolute;inset:0;margin:0;opacity:0;transition:opacity 1.1s var(--ease-out),visibility 0s 1.1s;visibility:hidden}
-.slide.is-active{opacity:1;visibility:visible;transition:opacity 1.1s var(--ease-out),visibility 0s}
+.carousel::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.35) 50%,transparent 65%);transform:translateX(-120%)}
+.carousel.sliding::after{animation:shine 1.15s var(--door)}
+/* Cada foto es una hoja de puerta corrediza de vidrio: entra deslizándose sobre la anterior, que se queda quieta y en sombra.
+   El perfil de aluminio y su sombra quedan por fuera de la foto, así solo se ven mientras la puerta corre. */
+.slide{position:absolute;inset:0;margin:0;z-index:0;visibility:hidden;transform:translateX(calc(var(--dir,1)*104%));transition:none}
+.slide.is-active{z-index:2;visibility:visible;transform:none;transition:transform 1.1s var(--door)}
+.slide.leaving{z-index:1;visibility:visible;transform:none;filter:brightness(.62);transition:filter 1.1s var(--door)}
+.slide::before{content:"";position:absolute;top:0;bottom:0;left:-46px;right:-46px;pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent,rgba(5,18,32,.5) 30px,#4a5c6b 30px,#dfe8ee 34px,#a9bac7 40px,#5f7486 46px) left/46px 100% no-repeat,
+    linear-gradient(270deg,transparent,rgba(5,18,32,.5) 30px,#4a5c6b 30px,#dfe8ee 34px,#a9bac7 40px,#5f7486 46px) right/46px 100% no-repeat}
 .slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.14);transition:transform 7s linear}
 .slide.is-active img{transform:scale(1.02)}
 .slide::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,37,64,0) 45%,rgba(10,37,64,.78))}
 .slide figcaption{position:absolute;left:20px;right:20px;bottom:18px;z-index:1;color:#fff;text-align:left;font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:clamp(1.5rem,2.6vw,2rem);line-height:1;
-  opacity:0;transform:translateY(14px);transition:opacity .7s .35s,transform .9s .35s var(--ease-out)}
+  opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
 .slide figcaption small{display:block;font-family:var(--f-cond);font-weight:700;font-size:.85rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sky-2);margin-bottom:4px}
-.slide.is-active figcaption{opacity:1;transform:none}
-.car-btn{position:absolute;top:50%;z-index:3;width:42px;height:42px;margin-top:-21px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(10,37,64,.28);
+.slide.is-active figcaption{opacity:1;transform:none;transition:opacity .7s .7s,transform .9s .7s var(--ease-out)}
+.car-btn{position:absolute;top:50%;z-index:5;width:42px;height:42px;margin-top:-21px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(10,37,64,.28);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font-size:1.2rem;line-height:1;cursor:pointer;display:grid;place-items:center;opacity:0;transition:opacity .3s,background .2s,transform .2s}
 .car-btn.prev{left:12px}.car-btn.next{right:12px}
 .carousel:hover .car-btn,.car-btn:focus-visible{opacity:1}
 .car-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.06)}
 @media (hover:none){.car-btn{opacity:1;width:36px;height:36px;margin-top:-18px}}
 
-/* Lugares: cada etiqueta maneja una foto del carrusel */
+/* Barras de progreso: cada una maneja una foto y se va llenando mientras se muestra */
 .places{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
 .place{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.07);color:var(--on-dark);font:600 .95rem var(--f-cond);letter-spacing:.04em;padding:8px 15px;border-radius:999px;cursor:pointer;transition:background .25s,border-color .25s,color .25s}
-.place:hover{background:rgba(255,255,255,.14)}
-.place[aria-selected="true"]{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.55);color:#fff}
 .place .fill{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--sky-2);transform:scaleX(0);transform-origin:left}
 .place[aria-selected="true"] .fill{animation:fillBar var(--dur,5200ms) linear forwards}
 .carousel-wrap.paused .place .fill{animation-play-state:paused}
 @keyframes fillBar{to{transform:scaleX(1)}}
+.places.bars{flex-wrap:nowrap;gap:6px;width:min(100%,300px)}
+.places.bars .place{flex:1;height:18px;padding:0;border:0;border-radius:0;background:none}
+.places.bars .place::before,.places.bars .place .fill{top:50%;bottom:auto;height:4px;margin-top:-2px;border-radius:2px}
+.places.bars .place::before{content:"";position:absolute;left:0;right:0;background:rgba(255,255,255,.22);transition:background .25s}
+.places.bars .place:hover::before{background:rgba(255,255,255,.4)}
 
 .carousel{cursor:pointer}
 .carousel.snap .slide{transition:none}
-.tap-hint{position:absolute;top:14px;left:14px;z-index:3;display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;pointer-events:none;
+.tap-hint{position:absolute;top:14px;left:14px;z-index:5;display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;pointer-events:none;
   font:700 .78rem var(--f-cond);letter-spacing:.12em;text-transform:uppercase;color:#fff;background:rgba(10,37,64,.35);border:1px solid rgba(255,255,255,.3);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:opacity .4s}
 .tap-hint svg{width:14px;height:14px;flex:none}
 .broke .tap-hint{opacity:0}
 
-/* Vidrio quebrado: pedazos de la foto que caen desde el punto tocado */
-.shatter{position:absolute;z-index:5;pointer-events:none;transform-style:preserve-3d}
+/* Vidrio quebrado: pedazos de la foto que caen desde el punto tocado, recortados por el marco de la foto */
+.shatter{position:absolute;inset:0;z-index:6;overflow:hidden;border-radius:inherit;pointer-events:none}
 .shard{position:absolute;inset:0;border-radius:20px;overflow:hidden;backface-visibility:hidden;will-change:transform,opacity}
 .shard .slide{transition:none}
 .shard .slide *{transition:none!important}

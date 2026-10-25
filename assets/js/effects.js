@@ -3,8 +3,8 @@
   const reduced=CV.reduced;
 
   /* Entradas al hacer scroll */
-  const staggered='.box,.steps li,.contact-grid > *,.home';
-  document.querySelectorAll('.page-head .stack, section:not([data-page="inicio"]) .band h2, .box, .steps li, .table-wrap, .ba, .combo, .contact-grid > *, .home').forEach(el=>{
+  const staggered='.box,.steps li,.contact-grid > *';
+  document.querySelectorAll('.page-head .stack, section:not([data-page="inicio"]) .band h2, .box, .steps li, .table-wrap, .ba, .combo, .contact-grid > *, .street').forEach(el=>{
     if(el.hasAttribute('data-reveal')) return;
     el.setAttribute('data-reveal','');
     const i=[...el.parentElement.children].filter(c=>c.matches(staggered)).indexOf(el);

@@ -2,7 +2,7 @@
 (function(){
   const {reduced,rnd,wait}=CV;
   const hint=document.getElementById('homesHint');
-  if(hint&&matchMedia('(hover: none)').matches) hint.textContent='Nos saludan desde sus ventanas recién limpias. Tocá una y mirá lo rápido que la dejamos brillando.';
+  if(hint&&matchMedia('(hover: none)').matches) hint.textContent='Los vecinos se cuentan entre ellos cómo les va. Tocá una ventana y mirá lo rápido que la dejamos brillando.';
   const ease=p=>p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
   const frames=(dur,fn)=>new Promise(done=>{
     const t0=performance.now();

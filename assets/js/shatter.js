@@ -1,9 +1,8 @@
-/* ---------- Vidrio quebrado: la foto se raja desde el punto tocado y cae en pedazos ---------- */
+/* ---------- Vidrio quebrado: la foto se raja desde el punto tocado y cae en pedazos, siempre dentro de su marco ---------- */
 CV.shatter=function(box,slide,px,py){
   const rnd=CV.rnd, TAU=Math.PI*2;
   const W=box.offsetWidth, H=box.offsetHeight;
   const layer=document.createElement('div'); layer.className='shatter';
-  Object.assign(layer.style,{left:box.offsetLeft+'px',top:box.offsetTop+'px',width:W+'px',height:H+'px'});
 
   // Copia congelada de la foto actual (con su zoom del momento) que va dentro de cada pedazo
   const pic=slide.cloneNode(true);
@@ -63,7 +62,7 @@ CV.shatter=function(box,slide,px,py){
     return {s,cx,cy,j};
   });
   layer.append(svg,hit);
-  box.parentElement.appendChild(layer);
+  box.appendChild(layer);
 
   const anims=[];
   setTimeout(()=>{

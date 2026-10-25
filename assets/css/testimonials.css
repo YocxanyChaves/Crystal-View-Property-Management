@@ -1,19 +1,22 @@
 /* ===== Lo que dicen: clientes saludando desde sus ventanas relucientes ===== */
-.homes{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;align-items:start}
-@media (max-width:1020px){.homes{grid-template-columns:repeat(2,1fr);row-gap:40px}}
-@media (max-width:560px){.homes{grid-template-columns:1fr;width:100%;max-width:340px;margin-inline:auto}}
-.home{margin:0;display:flex;flex-direction:column;min-width:0}
+/* La calle: una fila de casas que pasa lenta y sin parar. Todas apoyadas en la misma vereda y con las ventanas a la misma altura */
+.street{overflow:hidden;padding-top:12px;touch-action:pan-y}
+.homes{--gap:64px;--per:3;position:relative;display:flex;align-items:stretch;gap:var(--gap);will-change:transform}
+@media (max-width:1020px){.homes{--per:2;--gap:48px}}
+@media (max-width:620px){.homes{--per:1.14;--gap:30px}}
+.home{flex:0 0 calc((100% - (var(--per) - 1)*var(--gap))/var(--per));margin:0;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+/* Vereda continua: cada tramo se estira hasta la mitad del espacio con la casa vecina */
+.home::after{content:"";display:block;height:16px;margin:0 calc(var(--gap)/-2 - 1px);border-top:3px solid #8fa2b1;
+  background:repeating-linear-gradient(90deg,#b3c1cb 0 38px,#a3b3bf 38px 40px)}
 
 /* Fachada: cada propiedad tiene su pared, techo y vereda */
-.facade{--wall:#f4ead8;--trim:#fff;--roof:#1b4a73;position:relative;margin-top:58px;padding:22px 20px 0;border-radius:4px 4px 0 0;
+.facade{--wall:#f4ead8;--trim:#fff;--roof:#1b4a73;position:relative;margin-top:58px;padding:52px 20px 18px;border-radius:4px 4px 0 0;
   background:repeating-linear-gradient(180deg,transparent 0 15px,rgba(10,37,64,.06) 15px 17px),var(--wall);
   box-shadow:0 18px 30px rgba(10,37,64,.12)}
 .facade::before{content:"";position:absolute;left:-14px;right:-14px;bottom:100%;height:58px;
   background:linear-gradient(180deg,color-mix(in srgb,var(--roof) 80%,#fff),var(--roof));clip-path:polygon(50% 0,100% 100%,0 100%)}
-.facade::after{content:"";display:block;height:14px;margin:18px -20px 0;border-radius:0 0 4px 4px;
-  background:repeating-linear-gradient(90deg,#b3c1cb 0 38px,#a3b3bf 38px 40px)}
 .home--family .facade{--wall:#d3ebf8;--roof:#b8583f}
-.home--cafe .facade{--wall:#2f5d4f;--trim:#f4ead8;background:var(--wall)}
+.home--cafe .facade{--wall:#2f5d4f;--trim:#f4ead8;background:var(--wall);padding-top:22px}
 .home--cafe .facade::before{left:-8px;right:-8px;height:16px;border-radius:3px 3px 0 0;clip-path:none;background:#23463c}
 .home--office .facade{--wall:#cfd8df;--trim:#5f7486;background:var(--wall)}
 .home--office .facade::before{left:0;right:0;height:58px;clip-path:none;border-radius:4px 4px 0 0;
@@ -60,8 +63,18 @@
 .pane.shiny .person{animation:hop .45s ease 2}
 @keyframes hop{50%{transform:translateY(-6px)}}
 
-/* Lo que dicen, en un globo que sube hasta la ventana */
-.say{position:relative;margin-top:22px;padding:18px 18px 16px;border-radius:18px;background:var(--surface);border:1px solid var(--line);box-shadow:0 14px 30px rgba(10,37,64,.08);display:flex;flex-direction:column;gap:10px}
-.say::before{content:"";position:absolute;left:50%;top:-8px;width:16px;height:16px;margin-left:-8px;background:inherit;border:inherit;border-right:0;border-bottom:0;transform:rotate(45deg)}
+/* Lo que dicen: globos de diálogo sobre cada casa, corridos hacia el vecino con quien hablan */
+.say{order:-1;position:relative;width:88%;margin-bottom:34px;padding:18px 20px 16px;border-radius:22px;background:var(--surface);display:flex;flex-direction:column;gap:10px;
+  filter:drop-shadow(0 12px 18px rgba(10,37,64,.12))}
+.say::before{content:"";position:absolute;top:calc(100% - 1px);width:34px;height:30px;background:inherit}
+.to-r .say{align-self:flex-end;rotate:1deg}
+.to-r .say::before{left:18%;clip-path:polygon(0 0,100% 0,8% 100%)}
+.to-l .say{align-self:flex-start;rotate:-1deg}
+.to-l .say::before{right:18%;clip-path:polygon(0 0,100% 0,92% 100%)}
 .say blockquote{margin:0;font-size:1.02rem;font-weight:500;line-height:1.5;color:var(--navy)}
 .say cite{font-style:normal;color:var(--muted);font-size:.86rem;font-weight:600}
+
+/* Flechas para recorrer la calle a mano */
+.street-ctrl{display:flex;justify-content:center;gap:12px}
+.street-btn{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--sky-3);background:rgba(255,255,255,.7);color:var(--navy);font-size:1.3rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .2s,color .2s,transform .2s}
+.street-btn:hover{background:var(--navy);color:#fff;transform:scale(1.06)}
